@@ -6,8 +6,8 @@ on:
   workflow_dispatch:
 
 env:
-  WEBAPP_IMAGE_NAME: bigcapitalhq/webapp
-  SERVER_IMAGE_NAME: bigcapitalhq/server
+  WEBAPP_IMAGE_NAME: hsaii/webapp
+  SERVER_IMAGE_NAME: hsaii/server
 
 jobs:
   build-publish-webapp:
@@ -43,7 +43,7 @@ jobs:
 
       # Builds and push the Docker image.
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         id: build
         with:
           context: ./
@@ -51,7 +51,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           labels: ${{ steps.meta.outputs.labels }}
-          tags: bigcapitalhq/webapp:latest, bigcapitalhq/webapp:${{github.ref_name}}
+          tags: ${{ env.WEBAPP_IMAGE_NAME }}:latest, ${{ env.WEBAPP_IMAGE_NAME }}:${{ github.ref_name }}
 
       - name: Export digest
         run: |
@@ -66,11 +66,7 @@ jobs:
           path: /tmp/digests/*
           if-no-files-found: error
           retention-days: 1
-      # Send notification to Slack channel.
-      - name: Slack Notification built and published webapp container successfully.
-        uses: rtCamp/action-slack-notify@v2
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
 
   build-publish-server:
     name: Build and deploy server container
@@ -96,14 +92,14 @@ jobs:
 
       # Builds and push the Docker image.
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         id: build
         with:
           context: ./
           file: ./packages/server/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: bigcapitalhq/server:latest, bigcapitalhq/server:${{github.ref_name}}
+          tags: ${{ env.SERVER_IMAGE_NAME }}:latest, ${{ env.SERVER_IMAGE_NAME }}:${{ github.ref_name }}
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Export digest
@@ -119,9 +115,3 @@ jobs:
           path: /tmp/digests/*
           if-no-files-found: error
           retention-days: 1
-
-      # Send notification to Slack channel.
-      - name: Slack Notification built and published server container successfully.
-        uses: rtCamp/action-slack-notify@v2
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
