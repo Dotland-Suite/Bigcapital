@@ -41,9 +41,19 @@ jobs:
         with:
           images: ${{ env.WEBAPP_IMAGE_NAME }}
 
+      - name: Build and export to Docker
+        uses: docker/build-push-action@v6
+        with:
+          load: true
+          tags: ${{ env.WEBAPP_IMAGE_NAME }}:main
+
+      - name: Test
+        run: |
+          docker run --rm ${{ env.WEBAPP_IMAGE_NAME }}:main
+
       # Builds and push the Docker image.
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         id: build
         with:
           context: ./
@@ -89,9 +99,19 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Build and export to Docker
+        uses: docker/build-push-action@v6
+        with:
+          load: true
+          tags: ${{ env.SERVER_IMAGE_NAME }}:main
+
+      - name: Test
+        run: |
+          docker run --rm ${{ env.SERVER_IMAGE_NAME }}:main
+
       # Builds and push the Docker image.
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         id: build
         with:
           context: ./
@@ -137,9 +157,19 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Build and export to Docker
+        uses: docker/build-push-action@v6
+        with:
+          load: true
+          tags: ${{ env.REDIS_IMAGE_NAME }}:latest
+
+      - name: Test
+        run: |
+          docker run --rm ${{ env.REDIS_IMAGE_NAME }}:latest
+
       # Builds and push the Docker image.
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         id: build
         with:
           context: ./docker/redis/
