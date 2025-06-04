@@ -1,4 +1,4 @@
-FROM bigcapitalhq/server:latest as build
+FROM hsaii/server:main as build
 
 ARG DB_HOST= \
   DB_USER= \
