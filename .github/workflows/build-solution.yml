@@ -159,7 +159,7 @@ jobs:
       - name: Upload digest
         uses: actions/upload-artifact@v4
         with:
-          name: digests-server
-          path: /tmp/digests/*
+          name: digests-redis
+          path: /tmp/redis/*
           if-no-files-found: error
           retention-days: 1
